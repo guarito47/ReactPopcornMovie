@@ -4,7 +4,7 @@ This project was created in React as part of training course project on Udemy "T
 
 ## description
 
-this App is about Movie Rating by the user, you can search your prefered movie in the search box, and will show the related movies that contains your keyword listed in the left side where you can click your movie and will populate the related info about your selected movie in the right side, you can rate the movie by moving around the starts, and click to saved your rate, you can back by clicking the left arrow button or just press ESC key, also your movies rated will apped in the right side, where you can remove to rate again
+this App is about Movie Rating by the user, you can search your prefered movie in the search box, and will show the related movies that contains your keyword listed in the left side where you can click your movie and will populate the related info about your selected movie in the right side, you can rate the movie by moving around the starts, and click to saved your rate, you can back by clicking the left arrow button or just press ESC key, also your movies rated will appear in the right side, where you can remove to rate again
 
 ### `key features implemented`
 
