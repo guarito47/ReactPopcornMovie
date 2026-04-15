@@ -8,16 +8,16 @@ this App is about Movie Rating by the user, you can search your prefered movie i
 
 ### `key features implemented`
 
-component composition
-passing elements as props
-reusable components
-handling over events
-props as a componmet
-useEffects, cleanup functions 
-listening key press
-custom hooks
-useRef
-browser localStorage
+component composition, 
+passing elements as props, 
+reusable components, 
+handling over events, 
+props as a componmet, 
+useEffects, cleanup functions, 
+listening key press, 
+custom hooks, 
+useRef, 
+browser localStorage, 
 
 
 ### `Live demo`
