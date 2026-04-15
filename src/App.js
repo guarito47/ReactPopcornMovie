@@ -337,7 +337,7 @@ and we will do each time the userRating changes, to capture the times that chang
         try {
           setIsLoading(true);
           const res = await fetch(
-            `http://www.omdbapi.com/?apikey=${KEY}&i=${selectedId}`,
+            `https://www.omdbapi.com/?apikey=${KEY}&i=${selectedId}`,
           );
 
           if (!res.ok)

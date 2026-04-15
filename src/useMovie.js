@@ -24,7 +24,7 @@ export function useMovies(query) {
           setError(""); //by reset the error we will unblock the (error && <ErrorMessage message={error} )
 
           const res = await fetch(
-            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+            `https://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
             { signal: controller.signal }, //here we connect our abortController as signal
           );
           /*since this line we can handle if we receive the data or was interrupted by internet conecction or wherever*/
