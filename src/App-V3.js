@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import StarRating from "./StarRating";
-import { useKey } from "./useKey";
 import { useMovies } from "./useMovie";
 import { useLocalStorageState } from "./useLocalStorageState";
 
@@ -11,40 +10,30 @@ function SearchBox({ query, setQuery }) {
   /*we lift this query to the upper component (App)
   //const [query, setQuery] = useState("");*/
   const inputEl = useRef(null);
-  /*we are passing what happend when a specific keypress is hitted, we handle if when its already focus 
-  in search input and hits enter after typing this will clean the input and will clean the list of result,
-  not good, so if its the case do nothing*/
-  useKey("Enter", function () {
-    if (document.activeElement === inputEl.current) return;
 
-    inputEl.current.focus();
-    setQuery(""); //also after focus we will clean the prvius text
-  });
+  //useEffect to focus on input search box after every page load
+  useEffect(
+    function () {
+      //console.log(inputEl.current);
+      /*we name a function on order to reference the exacta semae function in cleanUp return tpo remove it
+    as all event handling we receive an event object*/
+      function callBack(e) {
+        /*we handle if when its already focus in search input and hits enter after typing this will clean the input
+      and will clean the list of result, not good, so if its the case do nothing*/
+        if (document.activeElement === inputEl.current) return;
 
-  // //useEffect to focus on input search box after every page load
-  // useEffect(
-  //   function () {
-  //     //console.log(inputEl.current);
-  //     /*we name a function on order to reference the exacta semae function in cleanUp return tpo remove it
-  //   as all event handling we receive an event object*/
-  //     function callBack(e) {
-  //       if (e.code === "Enter") {
-  //         /*we handle if when its already focus in search input and hits enter after typing this will clean the input
-  //     and will clean the list of result, not good, so if its the case do nothing*/
-  //         if (document.activeElement === inputEl.current) return;
+        if (e.code === "Enter") {
+          inputEl.current.focus();
+          setQuery(""); //also after focus we will clean the prvius text
+        }
+      }
 
-  //         inputEl.current.focus();
-  //         setQuery(""); //also after focus we will clean the prvius text
-  //       }
-  //     }
+      document.addEventListener("keydown", callBack);
 
-  //     document.addEventListener("keydown", callBack);
-
-  //     return () => document.removeEventListener("keypress", callBack);
-  //   },
-  //   [setQuery], //no need to set setQuery because at the end this donesnt change but just because eslint suggest we set
-  // );
-
+      return () => document.removeEventListener("keypress", callBack);
+    },
+    [setQuery], //no need to set setQuery because at the end this donesnt change but just because eslint suggest we set
+  );
   /* a way to focus the serach box (not the best instead better userf)
   useEffect(function () {
     const el = document.querySelector(".search");
@@ -386,31 +375,30 @@ and we will do each time the userRating changes, to capture the times that chang
     //everytime that title changes we need to to re render with the newest title
   );
 
-  useKey("Escape", onCloseMovie); //to handle esc keypress to do the same a back movie details button
+  //to handle esc keypress to do the same a back movie details button
+  useEffect(
+    function () {
+      /*as we know useffect is to do tasks outside react, in this case interacting with the DOM outside react
+      but this is a good example to use cleanUp return function, here as you can see the addListener will ADD
+      a new keydown function each time that this code runs, you can see by seeing the console.log repeationg +1 
+      each time that we close a selected movie*/
+      /*as you know we can directly set this function as anonymous directly in the add listener but because 
+      we will need to reffer this exact function later when we neer to remove this exact one, thats why we need
+      to name thsi function   */
+      function callBack(e) {
+        if (e.code === "Escape") onCloseMovie(); //console.log("closing by escape key");
+      }
+      document.addEventListener("keydown", callBack);
 
-  // useEffect(
-  //   function () {
-  //     /*as we know useffect is to do tasks outside react, in this case interacting with the DOM outside react
-  //     but this is a good example to use cleanUp return function, here as you can see the addListener will ADD
-  //     a new keydown function each time that this code runs, you can see by seeing the console.log repeationg +1
-  //     each time that we close a selected movie*/
-  //     /*as you know we can directly set this function as anonymous directly in the add listener but because
-  //     we will need to reffer this exact function later when we neer to remove this exact one, thats why we need
-  //     to name thsi function   */
-  //     function callBack(e) {
-  //       if (e.code === "Escape") onCloseMovie(); //console.log("closing by escape key");
-  //     }
-  //     document.addEventListener("keydown", callBack);
-
-  //     return function () {
-  //       /*so in this cleanUp function everytime that a component is mounted or unmounted
-  //       we will remove the existing keydown event, like only happen while its alive the component
-  //        */
-  //       document.removeEventListener("keydown", callBack);
-  //     };
-  //   },
-  //   [onCloseMovie],
-  // );
+      return function () {
+        /*so in this cleanUp function everytime that a component is mounted or unmounted 
+        we will remove the existing keydown event, like only happen while its alive the component
+         */
+        document.removeEventListener("keydown", callBack);
+      };
+    },
+    [onCloseMovie],
+  );
 
   return (
     <div className="details">

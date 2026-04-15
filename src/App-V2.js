@@ -1,57 +1,59 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import StarRating from "./StarRating";
-import { useKey } from "./useKey";
-import { useMovies } from "./useMovie";
-import { useLocalStorageState } from "./useLocalStorageState";
+
+const tempMovieData = [
+  {
+    imdbID: "tt1375666",
+    Title: "Inception",
+    Year: "2010",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
+  },
+  {
+    imdbID: "tt0133093",
+    Title: "The Matrix",
+    Year: "1999",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0Zi00ZTVkLWI0MTEtMDllZjNkYzNjNTc4L2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg",
+  },
+  {
+    imdbID: "tt6751668",
+    Title: "Parasite",
+    Year: "2019",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg",
+  },
+];
+
+const tempWatchedData = [
+  {
+    imdbID: "tt1375666",
+    Title: "Inception",
+    Year: "2010",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
+    runtime: 148,
+    imdbRating: 8.8,
+    userRating: 10,
+  },
+  {
+    imdbID: "tt0088763",
+    Title: "Back to the Future",
+    Year: "1985",
+    Poster:
+      "https://m.media-amazon.com/images/M/MV5BZmU0M2Y1OGUtZjIxNi00ZjBkLTg1MjgtOWIyNThiZWIwYjRiXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg",
+    runtime: 116,
+    imdbRating: 8.5,
+    userRating: 9,
+  },
+];
 
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
 function SearchBox({ query, setQuery }) {
-  /*we lift this query to the upper component (App)
-  //const [query, setQuery] = useState("");*/
-  const inputEl = useRef(null);
-  /*we are passing what happend when a specific keypress is hitted, we handle if when its already focus 
-  in search input and hits enter after typing this will clean the input and will clean the list of result,
-  not good, so if its the case do nothing*/
-  useKey("Enter", function () {
-    if (document.activeElement === inputEl.current) return;
-
-    inputEl.current.focus();
-    setQuery(""); //also after focus we will clean the prvius text
-  });
-
-  // //useEffect to focus on input search box after every page load
-  // useEffect(
-  //   function () {
-  //     //console.log(inputEl.current);
-  //     /*we name a function on order to reference the exacta semae function in cleanUp return tpo remove it
-  //   as all event handling we receive an event object*/
-  //     function callBack(e) {
-  //       if (e.code === "Enter") {
-  //         /*we handle if when its already focus in search input and hits enter after typing this will clean the input
-  //     and will clean the list of result, not good, so if its the case do nothing*/
-  //         if (document.activeElement === inputEl.current) return;
-
-  //         inputEl.current.focus();
-  //         setQuery(""); //also after focus we will clean the prvius text
-  //       }
-  //     }
-
-  //     document.addEventListener("keydown", callBack);
-
-  //     return () => document.removeEventListener("keypress", callBack);
-  //   },
-  //   [setQuery], //no need to set setQuery because at the end this donesnt change but just because eslint suggest we set
-  // );
-
-  /* a way to focus the serach box (not the best instead better userf)
-  useEffect(function () {
-    const el = document.querySelector(".search");
-    console.log(el);
-    el.focus();
-  }, []);*/
-
+  //we lift this query to the upper component (App)
+  //const [query, setQuery] = useState("");
   return (
     <input
       className="search"
@@ -59,7 +61,6 @@ function SearchBox({ query, setQuery }) {
       placeholder="Search movies..."
       value={query}
       onChange={(e) => setQuery(e.target.value)}
-      ref={inputEl}
     />
   );
 }
@@ -116,7 +117,29 @@ function MovieList({ movies, onSelectMovie }) {
   );
 }
 
-function Box({ children }) {
+//now is deprecated because now we use the reusable component 'Box'
+// function ListBox({ children }) {
+//   const [isOpen1, setIsOpen1] = useState(true);
+//   return (
+//     <div className="box">
+//       <button
+//         className="btn-toggle"
+//         onClick={() => setIsOpen1((open) => !open)}
+//       >
+//         {isOpen1 ? "–" : "+"}
+//       </button>
+//       {
+//         /*IMPORTANT NOTE: before was {children} but throw an error
+//         // "Objects are not valid as a React child (found: object with keys {children})"
+//         basically means the we are cresting a new object, which is not neccesary, all that we want is
+//         really conditionaly render this children prop, so to do that just remove the {}*/
+//         isOpen1 && children
+//       }
+//     </div>
+//   );
+// }
+
+function BoxByChildren({ children }) {
   const [isOpen, setIsOpen] = useState(true);
   return (
     <div className="box">
@@ -133,7 +156,7 @@ function Box({ children }) {
     </div>
   );
 }
-/*
+
 function BoxByElement({ element }) {
   const [isOpen, setIsOpen] = useState(true);
   return (
@@ -143,14 +166,14 @@ function BoxByElement({ element }) {
       </button>
       {
         /*IMPORTANT NOTE: before was {children} but throw an error 
-         "Objects are not valid as a React child (found: object with keys {children})"
+        // "Objects are not valid as a React child (found: object with keys {children})"
         basically means the we are cresting a new object, which is not neccesary, all that we want is
-        really conditionaly render this children prop, so to do that just remove the {}*/ /*
+        really conditionaly render this children prop, so to do that just remove the {}*/
         isOpen && element
       }
     </div>
   );
-}*/
+}
 
 function WatchedSummary({ watched }) {
   const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
@@ -274,18 +297,6 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
   const [isLoading, setIsLoading] = useState(false); //to handle motion icon when its loading the data
   const [error, setError] = useState(""); //keeps the error message
   const [userRating, setUserRating] = useState(0);
-  const countRef = useRef(0);
-
-  //no need list line but just to dont show its non use warning
-  console.log(error);
-  /*we cannot mutate(change value) the value of a useRef in the logic, we need to do it in a useEfeect
-and we will do each time the userRating changes, to capture the times that change his mind*/
-  useEffect(
-    function () {
-      if (userRating) countRef.current++;
-    },
-    [userRating],
-  );
 
   /*to prevent to add an movie already rated, first just create a NEW ARRAY with only imdbID's (using map) 
   with that array we will ask if already exist in the whatched list*/
@@ -295,7 +306,9 @@ and we will do each time the userRating changes, to capture the times that chang
   do this operation when is not null, that why we use the operator ? before trying top access a property*/
   const watchedUserRating = watched.find(
     (movie) => movie.imdbID === selectedId,
-  )?.userRating; //console.log(isWacthed);
+  )?.userRating;
+  //console.log(isWacthed);
+
   /*this is like a unwrap the fields of the object movie, but now renamed for each field as required, this case
 //just by lowering the inicial capital letter*/
   const {
@@ -313,6 +326,7 @@ and we will do each time the userRating changes, to capture the times that chang
 
   function handleAdd() {
     //as the local data from unwrap the movie, having the movie info, just need to process into whatedMovie format
+
     const newWatched = {
       imdbID: selectedId, //because the selectedId is as well imdb id
       title,
@@ -323,14 +337,12 @@ and we will do each time the userRating changes, to capture the times that chang
       split cut where find " " the result us ["148", "min"], we keep [0] that contains ("148")*/
       runtime: Number(runtime.split(" ").at(0)),
       userRating,
-      countRatingDecisions: countRef.current,
     };
     onAddWatched(newWatched);
     onCloseMovie();
   }
-
-  /*console.log(title, year);//
-  //because for a selectedId we need to FETCH their details (side effects), we need to use useEffect*/
+  //console.log(title, year);//
+  //because for a selectedId we need to FETCH their details (side effects), we need to use useEffect
   useEffect(
     function () {
       async function getMovieDetails() {
@@ -386,31 +398,30 @@ and we will do each time the userRating changes, to capture the times that chang
     //everytime that title changes we need to to re render with the newest title
   );
 
-  useKey("Escape", onCloseMovie); //to handle esc keypress to do the same a back movie details button
+  useEffect(
+    function () {
+      /*as we know useffect is to do tasks outside react, in this case interacting with the DOM outside react
+      but this is a good example to use cleanUp return function, here as you can see the addListener will ADD
+      a new keydown function each time that this code runs, you can see by seeing the console.log repeationg +1 
+      each time that we close a selected movie*/
+      /*as you know we can directly set this function as anonymous directly in the add listener but because 
+      we will need to reffer this exact function later when we neer to remove this exact one, thats why we need
+      to name thsi function   */
+      function callBack(e) {
+        if (e.code === "Escape") onCloseMovie();
+        //console.log("closing by escape key");
+      }
+      document.addEventListener("keydown", callBack);
 
-  // useEffect(
-  //   function () {
-  //     /*as we know useffect is to do tasks outside react, in this case interacting with the DOM outside react
-  //     but this is a good example to use cleanUp return function, here as you can see the addListener will ADD
-  //     a new keydown function each time that this code runs, you can see by seeing the console.log repeationg +1
-  //     each time that we close a selected movie*/
-  //     /*as you know we can directly set this function as anonymous directly in the add listener but because
-  //     we will need to reffer this exact function later when we neer to remove this exact one, thats why we need
-  //     to name thsi function   */
-  //     function callBack(e) {
-  //       if (e.code === "Escape") onCloseMovie(); //console.log("closing by escape key");
-  //     }
-  //     document.addEventListener("keydown", callBack);
-
-  //     return function () {
-  //       /*so in this cleanUp function everytime that a component is mounted or unmounted
-  //       we will remove the existing keydown event, like only happen while its alive the component
-  //        */
-  //       document.removeEventListener("keydown", callBack);
-  //     };
-  //   },
-  //   [onCloseMovie],
-  // );
+      return function () {
+        /*so in this cleanUp function everytime that a component is mounted or unmounted 
+        we will remove the existing keydown event, like only happen while its alive the component
+         */
+        document.removeEventListener("keydown", callBack);
+      };
+    },
+    [onCloseMovie],
+  );
 
   return (
     <div className="details">
@@ -479,11 +490,14 @@ const KEY = "5861a758";
 
 export default function App() {
   const [query, setQuery] = useState("");
+  //result of movies by search
+  const [movies, setMovies] = useState([]);
+  //list of whatched movies
+  const [watched, setWatched] = useState([]);
+  //flag to set loader when fetching
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(""); //keeps the error message
   const [selectedId, setSelectedId] = useState(null);
-  const { movies, isLoading, error } = useMovies(query);
-
-  const [watched, setWatched] = useLocalStorageState([], "watched");
-
   /* live test about use types of useEffect behavior 
   useEffect(function () {
     console.log("function [] after(despues) first render A");
@@ -521,8 +535,8 @@ export default function App() {
 
   /* newest function using asyc/await, 
   //IMPORTANT: but when using as useEffect function is not directly allowed
-  //from React: Effect callbacks are synchronous to prevent race conditions. Put the async function inside: ()=>
-  so react indicates to put inside a callback function again, also function (){} works as well*/
+  //from React: Effect callbacks are synchronous to prevent race conditions. Put the async function inside: ()=>*/
+  //so react indicates to put inside a callback function again, also function (){} works as well*/
 
   function handleSelectMovie(newSelectedId) {
     /*deprecated way, no handle when click the same already movieId selected, this time will close
@@ -543,13 +557,6 @@ export default function App() {
   function handleAddWatched(movie) {
     watched.filter((w) => w.imdbID === movie.imdbID).length === 0 &&
       setWatched((watched) => [...watched, movie]);
-    /*this instruction was moved to an effect to reutilize the process to store like in cache browser in key value pairs
-    // the watched list, in order to dont have the hugly empty box of watched movies
-    //as you know doing in the below way will not have the updated and we cant pass a function so we
-    //redo the same operation as setWatched
-    //localStorage.setItem("watched", watched);
-    // also we convert this array into string, because the value only can be string (maybe an object)
-    localStorage.setItem("watched", JSON.stringify([...watched, movie]));*/
   }
 
   /* own solution to dont duplicate movies in already whatched list also retrieves the userRating is already exist 
@@ -564,6 +571,77 @@ export default function App() {
   function handleDelete(id) {
     setWatched((watched) => watched.filter((m) => m.imdbID !== id));
   }
+  //to handle esc keypress to do the same a back movie details button
+
+  useEffect(
+    function () {
+      /*AborController is a native browser function that we will use to avoid concurrent race api calls,
+      this we need to connect as parameter in the fetch operation*/
+      const controller = new AbortController();
+
+      async function fetchMovies() {
+        try {
+          setIsLoading(true); //everytime that we are trying to fetch we will start with loading component
+          setError(""); //by reset the error we will unblock the (error && <ErrorMessage message={error} )
+
+          const res = await fetch(
+            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+            { signal: controller.signal }, //here we connect our abortController as signal
+          );
+          /*since this line we can handle if we receive the data or was interrupted by internet conecction or wherever*/
+          if (!res.ok)
+            throw new Error("something went wrong with fetching movies...");
+
+          const data = await res.json();
+          //now will handle when theres no movies with the specific query movie
+          if (data.Response === "False") throw new Error("Movie not found...");
+          //as you know updateStates dont ocurr as soon we read the intruction, instead its batched
+          setMovies(data.Search);
+          /*thats why this intruction doesnt reflect in an updated movie, this will log [] =
+      console.log(movies);
+        we remove setIsLoading(false); from this line and moved to finally block to remove the loading
+        no matter is fecth the data or found an error, this loading ist just while trying to fetch data
+          console.log(data);//to show how is the response structure*/
+          //also we need to disable the error state because we successfully have our data at this point
+          setError("");
+        } catch (err) {
+          /*we will handle if the error is not caused by an intentional abort by cancel request when fast typing*/
+          if (err.name !== "AbortError") {
+            console.log(err.message);
+            //so only when is not a error caused by ourselves, we have a real error
+            setError(err.message + " by setError");
+          }
+        } finally {
+          setIsLoading(false);
+        }
+      }
+      //we notice that when serachbox input is empty by initial state or by deleting text
+      //always show the error message of no results for "" movie, so wil handle when reach a "" input
+
+      if (query.length < 3) {
+        /*to limitate the operation to look movies with 2 letters
+        //if we have a "".lenght*/
+        setMovies([]); //to dont show the previous result search
+        setError(""); //to unblock error && <ErrorMessage message={error}
+        return; //if "" input no needed to try to look a movie with "" to dont execute the line below
+      }
+      //this handle when we start a new search, the current selected movie will be closed
+      handleCloseMovie();
+      /*IMPORTANT: as soon we finish to implement the async function we need to call it, if not will not executed
+      //dont forget that this is calling inside the function()*/
+      fetchMovies();
+      //this is the cleanup function of our useEffect hook
+      return function () {
+        /**IMPORTANT: as we want to dont launch multiple ongoing request while is typing letter by letter, 
+         * and as the nature of a cleanUp funtion this runs before and after a rerender occurs, so in our case, 
+         * after(despues) the fetch and render, will like close the connection by aborting something already finished 
+          but before(antes) executing the render logic will abort any other previous ongoing fetch in process,
+          that in fact will speed and save memory to catch innecesary data*/
+        controller.abort();
+      };
+    },
+    [query],
+  );
 
   return (
     <>
@@ -582,7 +660,7 @@ export default function App() {
             </>
           }
         /> */}
-        <Box>
+        <BoxByChildren>
           {
             /* deprecated way
           //isLoading ? <Loader /> : <MovieList movies={movies} />
@@ -601,8 +679,8 @@ export default function App() {
             //if theres an error then proint the error
             error && <ErrorMessage message={error} />
           }
-        </Box>
-        <Box>
+        </BoxByChildren>
+        <BoxByChildren>
           {selectedId ? (
             <MovieDetails
               selectedId={selectedId}
@@ -619,7 +697,7 @@ export default function App() {
               />
             </>
           )}
-        </Box>
+        </BoxByChildren>
       </Main>
     </>
   );

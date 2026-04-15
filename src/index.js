@@ -1,17 +1,39 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React, { useState } from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import StarRating from "./StarRating";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+function Test() {
+  //in order to catch the rating selected at this level we need to pass our variable state
+  //to take as a return value from the component starRating in that way we can use this info
+  const [movieRating, setMovieRating] = useState(0);
+  return (
+    <div>
+      <StarRating
+        color="blue"
+        maxRating={10}
+        onSetRating={setMovieRating}
+      ></StarRating>
+      <p>This movie was rated {movieRating} stars</p>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>
+    {/* <StarRating
+      maxRating={5}
+      messages={["terrible", "bad", "ok", "good", "Amazing"]}
+    ></StarRating>
+    <StarRating
+      size={24}
+      color="red"
+      className="test"
+      defaultRating={3}
+    ></StarRating>
+    <Test /> */}
+  </React.StrictMode>,
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
